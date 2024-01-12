@@ -2,4 +2,9 @@ spring:
   main:
     banner-mode: "off"
 book.file.name: "testBDJSON.json"
-test.url.books.list: "http://localhost:8080/books/list"
+test:
+  url:
+    books:
+      list:
+        right: "http://localhost:8080/books/list"
+        wrong: "http://localhost:8080/books/"
