@@ -1,6 +1,6 @@
 package com.example.interview.service;
 
-import com.example.interview.errors.ErrorUnableToReadBooksException;
+import com.example.interview.excteption.UnableToReadBooksException;
 import com.example.interview.model.Book;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,11 +16,10 @@ public class BookJsonFileRepository implements BookRepository {
 
     public BookJsonFileRepository(@Value("${book.file.name}") String fileName, ObjectMapper objectMapper) {
         try {
-            this.listBook = objectMapper.readValue(this.getClass().getClassLoader().getResourceAsStream(fileName),
-                    new TypeReference<List<Book>>() {
+            this.listBook = objectMapper.readValue(this.getClass().getClassLoader().getResourceAsStream(fileName), new TypeReference<List<Book>>() {
             });
         } catch (IOException e) {
-            throw new ErrorUnableToReadBooksException("Json" + fileName + "isn't read", e);
+            throw new UnableToReadBooksException("Json" + fileName + "isn't read", e);
         }
     }
 

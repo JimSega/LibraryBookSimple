@@ -2,3 +2,4 @@ spring:
   main:
     banner-mode: "off"
 book.file.name: "testBDJSON.json"
+test.url.books.list: "http://localhost:8080/books/list"

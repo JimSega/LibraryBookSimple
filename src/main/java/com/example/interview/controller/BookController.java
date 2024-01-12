@@ -12,9 +12,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
+
 public class BookController {
 
     private final BookRepository bookRepository;
+
     @GetMapping("/list")
     public List<Book> getList() {
         return bookRepository.getAll();
