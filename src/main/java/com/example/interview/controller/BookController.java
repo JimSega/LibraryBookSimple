@@ -1,12 +1,11 @@
 package com.example.interview.controller;
 
+import com.example.interview.DTO.BookDTO;
+import com.example.interview.excteption.NotFoundBookException;
 import com.example.interview.model.Book;
 import com.example.interview.service.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class BookController {
         return bookRepository.getAll();
     }
     @PostMapping("/reserving")
-    public Book reserve() {
-        return
+    public Book reserve(@RequestBody BookDTO bookDTO) {
+        return bookRepository.reserveBook(bookDTO.name()).orElseThrow(NotFoundBookException::new);
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
 public class BookJsonFileRepository implements BookRepository {
@@ -31,13 +30,14 @@ public class BookJsonFileRepository implements BookRepository {
     }
 
     public Optional<Book> reserveBook(String name) {
-        Stream<Book> reserveBook = listBook.stream().filter(book -> book
+        List<Book> searchingBook = listBook.stream().filter(book -> book
                 .getName()
                 .toLowerCase()
-                .contains(name.toLowerCase()));
-        if (reserveBook.count() > 1) {
+                .contains(name.toLowerCase()))
+                .toList();
+        if (searchingBook.size() > 1) {
             throw new MoreBooksException("Library has got more one book with this name!");
-        } else return reserveBook.findFirst();
+        } else return searchingBook.stream().findFirst();
 
     }
 }
