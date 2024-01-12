@@ -1,6 +1,7 @@
 package com.example.interview.service;
 
 import com.example.interview.excteption.MoreBooksException;
+import com.example.interview.excteption.NotCopiesException;
 import com.example.interview.excteption.UnableToReadBooksException;
 import com.example.interview.model.Book;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,7 +19,7 @@ public class BookJsonFileRepository implements BookRepository {
 
     public BookJsonFileRepository(@Value("${book.file.name}") String fileName, ObjectMapper objectMapper) {
         try {
-            this.listBook = objectMapper.readValue(this.getClass().getClassLoader().getResourceAsStream(fileName), new TypeReference<List<Book>>() {
+            this.listBook = objectMapper.readValue(this.getClass().getClassLoader().getResourceAsStream(fileName), new TypeReference<>() {
             });
         } catch (IOException e) {
             throw new UnableToReadBooksException("Json" + fileName + "isn't read", e);
@@ -31,13 +32,19 @@ public class BookJsonFileRepository implements BookRepository {
 
     public Optional<Book> reserveBook(String name) {
         List<Book> searchingBook = listBook.stream().filter(book -> book
-                .getName()
-                .toLowerCase()
-                .contains(name.toLowerCase()))
+                        .getName()
+                        .toLowerCase()
+                        .contains(name.toLowerCase()))
                 .toList();
         if (searchingBook.size() > 1) {
-            throw new MoreBooksException("Library has got more one book with this name!");
-        } else return searchingBook.stream().findFirst();
-
+            throw new MoreBooksException("Library has got a lot of books with this name!");
+        } else {
+            searchingBook = searchingBook.stream().filter(book -> book
+                            .getCopies() > 0)
+                    .toList();
+            if (searchingBook.size() == 1) {
+                return searchingBook.stream().findFirst();
+            } else throw new NotCopiesException("Library hasn't copies this book now! " + name);
+        }
     }
 }
