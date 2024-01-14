@@ -1,4 +1,4 @@
-package com.example.interview.service;
+package com.example.interview.repository;
 
 import com.example.interview.model.Book;
 
@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface BookRepository {
     List<Book> getAll();
-    Optional<Book> reserveBook(String name);
+    Optional<Book> reserveBook(List<Book> list, String name);
 }

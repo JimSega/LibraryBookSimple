@@ -1,4 +1,4 @@
-package com.example.interview.service;
+package com.example.interview.repository;
 
 import com.example.interview.excteption.*;
 import com.example.interview.model.Book;
@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public class BookJsonFileRepository implements BookRepository {
+
     private final List<Book> listBook;
 
     public BookJsonFileRepository(@Value("${book.file.name}") String fileName, ObjectMapper objectMapper) {
@@ -29,16 +30,16 @@ public class BookJsonFileRepository implements BookRepository {
         return listBook;
     }
 
-    public Optional<Book> reserveBook(String name) {
+    public Optional<Book> reserveBook(List<Book> listBookNow, String name) {
         List<Book> searchingBook;
         if (name != null) {
-            searchingBook = listBook.stream().filter(book -> book
+            searchingBook = listBookNow.stream().filter(book -> book
                             .getName()
                             .toLowerCase()
                             .contains(name.toLowerCase()))
                     .toList();
         } else throw new NotFoundFieldNameBookException(ExceptionMessage.NOT_FOUND_FIELD_NAME_BOOK.toString());
-        if (searchingBook.size() == 0) {
+        if (searchingBook.isEmpty()) {
             throw new NotFoundBookException(ExceptionMessage.NOT_FOUND_BOOK.toString());
         }
         if (searchingBook.size() > 1) {

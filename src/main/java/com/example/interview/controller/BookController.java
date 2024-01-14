@@ -1,10 +1,11 @@
 package com.example.interview.controller;
 
 import com.example.interview.DTO.BookDTO;
+import com.example.interview.DTO.BookMapper;
 import com.example.interview.excteption.NotFoundBookException;
 import com.example.interview.model.Book;
-import com.example.interview.service.BookRepository;
-import com.example.interview.service.Library;
+import com.example.interview.repository.BookRepository;
+import com.example.interview.model.Library;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +28,12 @@ public class BookController {
     }
 
     @PostMapping("/reserving")
-    public Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
-        Book book = bookRepository.reserveBook(bookDTO.name()).orElseThrow(NotFoundBookException::new);
+    public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
+        Book book = bookRepository.reserveBook(library.getListBookNow(), bookDTO.name())
+                .orElseThrow(NotFoundBookException::new);
         UUID token = UUID.randomUUID();
+        library.libraryUpdateBook(book, -1);
         library.getMapUUID().put(token, book);
-        return Map.of(BookDTO.convertBookToDTO(book), token);
+        return Map.of(BookMapper.BookMapperDTO.bookToBookDTO(book), token);
     }
 }
