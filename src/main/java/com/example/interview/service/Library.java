@@ -24,7 +24,7 @@ public class Library {
 
     Library(BookRepository bookRepository) {
         this.listBookNow = bookRepository.getAll().stream()
-                .map(book -> BookMapper.INSTANCE.bookToBookEntity(book)).collect(Collectors.toList());
+                .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList());
     }
 
     public synchronized void libraryUpdateBook(BookEntity bookEntity, int i) {
