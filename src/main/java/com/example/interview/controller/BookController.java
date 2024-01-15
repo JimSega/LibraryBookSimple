@@ -1,11 +1,12 @@
 package com.example.interview.controller;
 
 import com.example.interview.DTO.BookDTO;
+import com.example.interview.DTO.BookEntity;
 import com.example.interview.DTO.BookMapper;
 import com.example.interview.excteption.NotFoundBookException;
 import com.example.interview.model.Book;
 import com.example.interview.repository.BookRepository;
-import com.example.interview.model.Library;
+import com.example.interview.service.Library;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,16 +30,17 @@ public class BookController {
 
     @PostMapping("/reserving")
     public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
-        Book book = bookRepository.reserveBook(library.getListBookNow(), bookDTO.name())
+        BookEntity book = library.reserveBook(bookDTO.name())
                 .orElseThrow(NotFoundBookException::new);
         UUID token = UUID.randomUUID();
         library.libraryUpdateBook(book, -1);
         library.getMapUUID().put(token, book);
-        return Map.of(BookMapper.BookMapperDTO.bookToBookDTO(book), token);
+        //return Map.of(BookMapper.BookMapperDTO.bookToBookDTO(book), token);
+        return Map.of(BookMapper.BookMapperDTO.bookEntityToBookDTO(book), token);
     }
 
     @GetMapping("/available")
     public List<String> getAvailable() {
-        return library.getListBookNow().stream().filter(b -> b.getCopies() > 0).map(Book::getName).toList();
+        return library.getListBookNow().stream().filter(b -> b.getCopies() > 0).map(BookEntity::getName).toList();
     }
 }

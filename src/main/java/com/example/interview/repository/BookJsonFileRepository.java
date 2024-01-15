@@ -29,28 +29,4 @@ public class BookJsonFileRepository implements BookRepository {
     public List<Book> getAll() {
         return listBook;
     }
-
-    public Optional<Book> reserveBook(List<Book> listBookNow, String name) {
-        List<Book> searchingBook;
-        if (name != null) {
-            searchingBook = listBookNow.stream().filter(book -> book
-                            .getName()
-                            .toLowerCase()
-                            .contains(name.toLowerCase()))
-                    .toList();
-        } else throw new NotFoundFieldNameBookException(ExceptionMessage.NOT_FOUND_FIELD_NAME_BOOK.toString());
-        if (searchingBook.isEmpty()) {
-            throw new NotFoundBookException(ExceptionMessage.NOT_FOUND_BOOK.toString());
-        }
-        if (searchingBook.size() > 1) {
-            throw new LotOfBooksException(ExceptionMessage.LOOT_OF_BOOKS.toString());
-        } else {
-            searchingBook = searchingBook.stream().filter(book -> book
-                            .getCopies() > 0)
-                    .toList();
-            if (searchingBook.size() == 1) {
-                return searchingBook.stream().findFirst();
-            } else throw new NotCopiesException(ExceptionMessage.NOT_COPIES + name);
-        }
-    }
 }

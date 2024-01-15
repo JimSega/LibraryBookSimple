@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface BookRepository {
     List<Book> getAll();
-    Optional<Book> reserveBook(List<Book> list, String name);
 }

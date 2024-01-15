@@ -9,4 +9,8 @@ public interface BookMapper {
     BookMapper BookMapperDTO = Mappers.getMapper(BookMapper.class);
 
     BookDTO bookToBookDTO(Book book);
+
+    BookEntity bookToBookEntity(Book book);
+
+    BookDTO bookEntityToBookDTO(BookEntity bookEntity);
 }
