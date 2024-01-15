@@ -6,11 +6,9 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface BookMapper {
-    BookMapper BookMapperDTO = Mappers.getMapper(BookMapper.class);
+    BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
+    BookEntity bookToBookEntity (Book book);
 
-    BookDTO bookToBookDTO(Book book);
+    BookDTO bookEntityToBookDTO (BookEntity bookEntity);
 
-    BookEntity bookToBookEntity(Book book);
-
-    BookDTO bookEntityToBookDTO(BookEntity bookEntity);
 }

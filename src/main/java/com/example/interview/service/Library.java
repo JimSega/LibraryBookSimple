@@ -24,10 +24,10 @@ public class Library {
 
     Library(BookRepository bookRepository) {
         this.listBookNow = bookRepository.getAll().stream()
-                .map(BookMapper.BookMapperDTO::bookToBookEntity).collect(Collectors.toList());
+                .map(book -> BookMapper.INSTANCE.bookToBookEntity(book)).collect(Collectors.toList());
     }
 
-    public void libraryUpdateBook(BookEntity bookEntity, int i) {
+    public synchronized void libraryUpdateBook(BookEntity bookEntity, int i) {
         listBookNow = listBookNow.stream().peek(b -> {
             if (b.getName().equals(bookEntity.getName())) {
                 b.setCopies(b.getCopies() + i);

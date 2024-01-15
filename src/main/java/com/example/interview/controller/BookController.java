@@ -30,13 +30,12 @@ public class BookController {
 
     @PostMapping("/reserving")
     public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
-        BookEntity book = library.reserveBook(bookDTO.name())
+        BookEntity bookEntity = library.reserveBook(bookDTO.name())
                 .orElseThrow(NotFoundBookException::new);
         UUID token = UUID.randomUUID();
-        library.libraryUpdateBook(book, -1);
-        library.getMapUUID().put(token, book);
-        //return Map.of(BookMapper.BookMapperDTO.bookToBookDTO(book), token);
-        return Map.of(BookMapper.BookMapperDTO.bookEntityToBookDTO(book), token);
+        library.libraryUpdateBook(bookEntity, -1);
+        library.getMapUUID().put(token, bookEntity);
+        return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
     }
 
     @GetMapping("/available")
