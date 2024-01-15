@@ -1,4 +1,11 @@
 package com.example.interview.DTO;
 
-public record BookEntity(int id, String author, int copies, String name) {
+import lombok.Data;
+
+@Data
+public class BookEntity {
+    private int id;
+    private String author;
+    private int copies;
+    private String name;
 }
