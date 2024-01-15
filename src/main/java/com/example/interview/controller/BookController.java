@@ -36,4 +36,9 @@ public class BookController {
         library.getMapUUID().put(token, book);
         return Map.of(BookMapper.BookMapperDTO.bookToBookDTO(book), token);
     }
+
+    @GetMapping("/available")
+    public List<String> getAvailable() {
+        return library.getListBookNow().stream().filter(b -> b.getCopies() > 0).map(Book::getName).toList();
+    }
 }
