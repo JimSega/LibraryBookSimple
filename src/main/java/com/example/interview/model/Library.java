@@ -22,7 +22,7 @@ public class Library {
         this.listBookNow = bookRepository.getAll();
     }
 
-    public void libraryUpdateBook(Book book, int i) {
+    public synchronized void libraryUpdateBook(Book book, int i) {
         listBookNow = listBookNow.stream().peek(b -> {
             if (b.equals(book)) {
                 b.setCopies(book.getCopies() + i);
