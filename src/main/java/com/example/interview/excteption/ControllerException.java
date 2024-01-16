@@ -40,4 +40,9 @@ public class ControllerException {
         return ResponseEntity.badRequest().body(Map.of("exception", ExceptionMessage.WRONG_TOKEN.toString()));
     }
 
+    @ExceptionHandler(UserNameException.class)
+    public ResponseEntity<Map<String, String>> notFoundUserName() {
+        return ResponseEntity.badRequest().body(Map.of("exception", ExceptionMessage.NOT_FOND_USERNAME.toString()));
+    }
+
 }

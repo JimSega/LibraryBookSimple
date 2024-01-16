@@ -2,9 +2,10 @@ package com.example.interview.controller;
 
 import com.example.interview.DTO.BookDTO;
 import com.example.interview.DTO.BookEntity;
-import com.example.interview.DTO.BookMapper;
 import com.example.interview.DTO.Token;
+import com.example.interview.excteption.ExceptionMessage;
 import com.example.interview.excteption.NotFoundBookException;
+import com.example.interview.excteption.UserNameException;
 import com.example.interview.model.Book;
 import com.example.interview.repository.BookRepository;
 import com.example.interview.service.Library;
@@ -32,6 +33,9 @@ public class BookController {
     @PostMapping("/reserving")
     //public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
     public synchronized Map<String, UUID> reserve(@RequestBody BookDTO bookDTO) {
+        if(bookDTO.getUserName() == null) {
+            throw new UserNameException(ExceptionMessage.NOT_FOND_USERNAME.toString());
+        }
         BookEntity bookEntity = library.reserveBook(bookDTO.getName())
                 .orElseThrow(NotFoundBookException::new);
         UUID token = UUID.randomUUID();
@@ -55,7 +59,7 @@ public class BookController {
 
     @PostMapping("/return")
     public Map<String, String> returnBook(@RequestBody Token token) {
-        library.returnBook(token);
-        return Map.of("return", "complete");
+        BookDTO bookDTO = library.returnBook(token);
+        return Map.of("return", bookDTO.getName());
     }
 }

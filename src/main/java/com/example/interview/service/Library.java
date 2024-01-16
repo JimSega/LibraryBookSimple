@@ -66,11 +66,11 @@ public class Library {
                 .collect(Collectors.toList());
     }
 
-    public void returnBook(Token token) {
+    public BookDTO returnBook(Token token) {
         BookEntity bookEntity = mapUUID.remove(token.token());
         if (bookEntity != null) {
             libraryUpdateBook(bookEntity, 1);
-            mapBookUsedUser.remove(token.token());
+            return mapBookUsedUser.remove(token.token());
         } else throw new WrongTokenException(ExceptionMessage.WRONG_TOKEN.toString());
     }
 }
