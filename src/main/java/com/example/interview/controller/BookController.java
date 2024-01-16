@@ -3,6 +3,7 @@ package com.example.interview.controller;
 import com.example.interview.DTO.BookDTO;
 import com.example.interview.DTO.BookEntity;
 import com.example.interview.DTO.BookMapper;
+import com.example.interview.DTO.Token;
 import com.example.interview.excteption.NotFoundBookException;
 import com.example.interview.model.Book;
 import com.example.interview.repository.BookRepository;
@@ -35,7 +36,7 @@ public class BookController {
         UUID token = UUID.randomUUID();
         library.libraryUpdateBook(bookEntity, -1);
         library.getMapUUID().put(token, bookEntity);
-        library.getListBookUsedUser().add(bookDTO);
+        library.getMapBookUsedUser().put(token, bookDTO);
         return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
     }
 
@@ -44,8 +45,13 @@ public class BookController {
         return library.getListBookNow().stream().filter(b -> b.getCopies() > 0).map(BookEntity::getName).toList();
     }
 
-    @GetMapping(value = "/usedBook/{user}")
+    @GetMapping(value = "/usedbook/{user}")
     public List<String> getUsedBook(@PathVariable("user") String userName) {
         return library.getBookUsedUser(userName);
+    }
+
+    @PostMapping("/return")
+    public Map<String, String> returnBook(@RequestBody Token token) {
+
     }
 }

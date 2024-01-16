@@ -35,4 +35,9 @@ public class ControllerException {
                 .toString()));
     }
 
+    @ExceptionHandler(WrongTokenException.class)
+    public ResponseEntity<Map<String, String>> wrongToken() {
+        return ResponseEntity.badRequest().body(Map.of("exception", ExceptionMessage.WRONG_TOKEN.toString()));
+    }
+
 }

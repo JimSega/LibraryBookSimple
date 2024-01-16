@@ -8,6 +8,7 @@ public enum ExceptionMessage {
     NOT_COPIES("not copies this book, try later"),
     NOT_FOUND_FIELD_NAME_BOOK("you should use field Name"),
     NOT_FOUND_BOOK("library hasn't these book"),
+    WRONG_TOKEN("this token is wrong"),
     WRONG_FORMAT("please use json format");
     private final String exception;
     @Override

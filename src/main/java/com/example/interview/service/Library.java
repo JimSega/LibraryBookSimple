@@ -3,6 +3,7 @@ package com.example.interview.service;
 import com.example.interview.DTO.BookDTO;
 import com.example.interview.DTO.BookEntity;
 import com.example.interview.DTO.BookMapper;
+import com.example.interview.DTO.Token;
 import com.example.interview.excteption.*;
 import com.example.interview.repository.BookRepository;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Library {
     private final Map<UUID, BookEntity> mapUUID = new ConcurrentHashMap<>();
 
     private volatile List<BookEntity> listBookNow;
-    private List<BookDTO> ListBookUsedUser = new ArrayList<>();
+    private Map<UUID, BookDTO> mapBookUsedUser = new ConcurrentHashMap<>();
 
     Library(BookRepository bookRepository) {
         this.listBookNow = bookRepository.getAll().stream()
@@ -59,10 +60,21 @@ public class Library {
     }
 
     public List<String> getBookUsedUser(String userName) {
-        return ListBookUsedUser.stream().filter(bookDTO -> bookDTO
-                        .userName()
-                        .equals(userName))
+        return mapBookUsedUser.values().stream()
+                .filter(bookDTO -> bookDTO.userName().equals(userName))
                 .map(BookDTO::name)
                 .collect(Collectors.toList());
+    }
+
+    public void returnBook(Token token) {
+        BookDTO bookDTO = mapBookUsedUser.remove(token.token());
+        if (bookDTO != null) {
+            listBookNow.stream().peek(b -> {
+                if(b.getName().equals(bookDTO.name())) {
+
+                }
+            })
+        } else throw new WrongTokenException(ExceptionMessage.WRONG_TOKEN.toString());
+
     }
 }
