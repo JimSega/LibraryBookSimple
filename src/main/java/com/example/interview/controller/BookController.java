@@ -30,14 +30,17 @@ public class BookController {
     }
 
     @PostMapping("/reserving")
-    public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
-        BookEntity bookEntity = library.reserveBook(bookDTO.name())
+    //public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
+    public synchronized Map<String, UUID> reserve(@RequestBody BookDTO bookDTO) {
+        BookEntity bookEntity = library.reserveBook(bookDTO.getName())
                 .orElseThrow(NotFoundBookException::new);
         UUID token = UUID.randomUUID();
         library.libraryUpdateBook(bookEntity, -1);
         library.getMapUUID().put(token, bookEntity);
+        bookDTO.setName(bookEntity.getName());
         library.getMapBookUsedUser().put(token, bookDTO);
-        return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
+        //return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
+        return Map.of(bookDTO.getName(), token);
     }
 
     @GetMapping("/available")
@@ -52,6 +55,7 @@ public class BookController {
 
     @PostMapping("/return")
     public Map<String, String> returnBook(@RequestBody Token token) {
-
+        library.returnBook(token);
+        return Map.of("return", "complete");
     }
 }

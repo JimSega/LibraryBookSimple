@@ -61,20 +61,16 @@ public class Library {
 
     public List<String> getBookUsedUser(String userName) {
         return mapBookUsedUser.values().stream()
-                .filter(bookDTO -> bookDTO.userName().equals(userName))
-                .map(BookDTO::name)
+                .filter(bookDTO -> bookDTO.getUserName().equals(userName))
+                .map(BookDTO::getName)
                 .collect(Collectors.toList());
     }
 
     public void returnBook(Token token) {
-        BookDTO bookDTO = mapBookUsedUser.remove(token.token());
-        if (bookDTO != null) {
-            listBookNow.stream().peek(b -> {
-                if(b.getName().equals(bookDTO.name())) {
-
-                }
-            })
+        BookEntity bookEntity = mapUUID.remove(token.token());
+        if (bookEntity != null) {
+            libraryUpdateBook(bookEntity, 1);
+            mapBookUsedUser.remove(token.token());
         } else throw new WrongTokenException(ExceptionMessage.WRONG_TOKEN.toString());
-
     }
 }

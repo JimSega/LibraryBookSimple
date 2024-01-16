@@ -1,6 +1,11 @@
 package com.example.interview.DTO;
 
-public record BookDTO(String name, String userName) {
+import lombok.Data;
+
+@Data
+public class BookDTO {
+    String name;
+    String userName;
 
     @Override
     public String toString() {
