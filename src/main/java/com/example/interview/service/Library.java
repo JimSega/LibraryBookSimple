@@ -1,5 +1,6 @@
 package com.example.interview.service;
 
+import com.example.interview.DTO.BookDTO;
 import com.example.interview.DTO.BookEntity;
 import com.example.interview.DTO.BookMapper;
 import com.example.interview.excteption.*;
@@ -7,10 +8,7 @@ import com.example.interview.repository.BookRepository;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,7 @@ public class Library {
     private final Map<UUID, BookEntity> mapUUID = new ConcurrentHashMap<>();
 
     private volatile List<BookEntity> listBookNow;
+    private List<BookDTO> ListBookUsedUser = new ArrayList<>();
 
     Library(BookRepository bookRepository) {
         this.listBookNow = bookRepository.getAll().stream()
@@ -57,5 +56,13 @@ public class Library {
                 return searchingBook.stream().findFirst();
             } else throw new NotCopiesException(ExceptionMessage.NOT_COPIES + name);
         }
+    }
+
+    public List<String> getBookUsedUser(String userName) {
+        return ListBookUsedUser.stream().filter(bookDTO -> bookDTO
+                        .userName()
+                        .equals(userName))
+                .map(BookDTO::name)
+                .collect(Collectors.toList());
     }
 }

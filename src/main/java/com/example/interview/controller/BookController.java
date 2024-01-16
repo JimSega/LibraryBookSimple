@@ -35,11 +35,17 @@ public class BookController {
         UUID token = UUID.randomUUID();
         library.libraryUpdateBook(bookEntity, -1);
         library.getMapUUID().put(token, bookEntity);
+        library.getListBookUsedUser().add(bookDTO);
         return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
     }
 
     @GetMapping("/available")
     public List<String> getAvailable() {
         return library.getListBookNow().stream().filter(b -> b.getCopies() > 0).map(BookEntity::getName).toList();
+    }
+
+    @GetMapping(value = "/usedBook/{user}")
+    public List<String> getUsedBook(@PathVariable("user") String userName) {
+        return library.getBookUsedUser(userName);
     }
 }
