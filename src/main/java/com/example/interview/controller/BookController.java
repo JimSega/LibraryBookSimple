@@ -5,6 +5,7 @@ import com.example.interview.DTO.BookEntity;
 import com.example.interview.DTO.Token;
 import com.example.interview.excteption.ExceptionMessage;
 import com.example.interview.excteption.NotFoundBookException;
+import com.example.interview.excteption.SecondReserveThisBookException;
 import com.example.interview.excteption.UserNameException;
 import com.example.interview.model.Book;
 import com.example.interview.repository.BookRepository;
@@ -31,19 +32,25 @@ public class BookController {
     }
 
     @PostMapping("/reserving")
-    //public synchronized Map<BookDTO, UUID> reserve(@RequestBody BookDTO bookDTO) {
     public synchronized Map<String, UUID> reserve(@RequestBody BookDTO bookDTO) {
-        if(bookDTO.getUserName() == null) {
+        if (bookDTO.getUserName() == null) {
             throw new UserNameException(ExceptionMessage.NOT_FOND_USERNAME.toString());
         }
         BookEntity bookEntity = library.reserveBook(bookDTO.getName())
                 .orElseThrow(NotFoundBookException::new);
+        bookDTO.setName(bookEntity.getName());
+        if(library.getMapBookUsedUser().containsValue(bookDTO)) {
+            UUID uuidGotAlready = library.getMapBookUsedUser().entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(bookDTO))
+                    .map(Map.Entry::getKey)
+                    .toList()
+                    .get(0);
+            throw new SecondReserveThisBookException(ExceptionMessage.THIS_BOOK_ALREADY_RESERVE.toString(), uuidGotAlready);
+        }
         UUID token = UUID.randomUUID();
         library.libraryUpdateBook(bookEntity, -1);
         library.getMapUUID().put(token, bookEntity);
-        bookDTO.setName(bookEntity.getName());
         library.getMapBookUsedUser().put(token, bookDTO);
-        //return Map.of(BookMapper.INSTANCE.bookEntityToBookDTO(bookEntity), token);
         return Map.of(bookDTO.getName(), token);
     }
 

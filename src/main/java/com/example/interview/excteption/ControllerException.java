@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
+import java.util.UUID;
 
 @ControllerAdvice
 public class ControllerException {
@@ -43,6 +44,12 @@ public class ControllerException {
     @ExceptionHandler(UserNameException.class)
     public ResponseEntity<Map<String, String>> notFoundUserName() {
         return ResponseEntity.badRequest().body(Map.of("exception", ExceptionMessage.NOT_FOND_USERNAME.toString()));
+    }
+
+    @ExceptionHandler(SecondReserveThisBookException.class)
+    public ResponseEntity<Map<UUID, String>> secondReserve(SecondReserveThisBookException ex) {
+        return ResponseEntity.badRequest().body(Map.of(ex.getUuid(),
+                ExceptionMessage.THIS_BOOK_ALREADY_RESERVE.toString()));
     }
 
 }

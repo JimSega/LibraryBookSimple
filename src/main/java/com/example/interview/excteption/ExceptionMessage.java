@@ -10,6 +10,7 @@ public enum ExceptionMessage {
     NOT_FOUND_BOOK("library hasn't these book"),
     WRONG_TOKEN("this token is wrong"),
     NOT_FOND_USERNAME("you need to write userName"),
+    THIS_BOOK_ALREADY_RESERVE(" you reserve this book already"),
     WRONG_FORMAT("please use json format");
     private final String exception;
     @Override
