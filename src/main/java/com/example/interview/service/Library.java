@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class Library {
 
     private final Map<UUID, BookEntity> mapUUID = new ConcurrentHashMap<>();
-
     private volatile List<BookEntity> listBookNow;
     private Map<UUID, BookDTO> mapBookUsedUser = new ConcurrentHashMap<>();
 
