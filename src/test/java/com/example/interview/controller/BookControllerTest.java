@@ -65,21 +65,21 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    Library library;
+    //Library library;
 
     @Autowired
-    BookRepository bookRepository;
+    //BookRepository bookRepository;
 
     @BeforeEach
     protected void setUp(WebApplicationContext webApplicationContext) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    @AfterEach
+    /*@AfterEach
     private void restartLibrary() {
         library.setListBookNow(bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList()));
-    }
+    }*/
 
     protected static String convertMapToJson(String name, String userName) {
         Map<String, String> map = Map.of("name", name, "userName", userName);
@@ -171,7 +171,7 @@ class BookControllerTest {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(available)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andReturn();
-        assertNotNull(mvcResult.getResponse().getContentAsString());
+        assertNotEquals("[]", mvcResult.getResponse().getContentAsString());
     }
 
     @Test

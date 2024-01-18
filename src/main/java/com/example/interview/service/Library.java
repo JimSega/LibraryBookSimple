@@ -24,6 +24,7 @@ public class Library {
     Library(BookRepository bookRepository) {
         this.listBookNow = bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList());
+        listBookNow.stream().map(bookEntity -> bookEntity.getName()).forEach(System.out::println);
     }
 
     public synchronized void libraryUpdateBook(BookEntity bookEntity, int i) {
@@ -37,6 +38,7 @@ public class Library {
     public Optional<BookEntity> reserveBook(String name) {
         List<BookEntity> searchingBook;
         if (name != null) {
+            System.out.println(name);
             searchingBook = listBookNow.stream().filter(book -> book
                             .getName()
                             .toLowerCase()
