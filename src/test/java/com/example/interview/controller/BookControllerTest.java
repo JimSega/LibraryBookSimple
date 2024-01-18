@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = InterviewTaskApplication.class)
-//@WebAppConfiguration
+@WebAppConfiguration
 @TestPropertySource("classpath:test.properties")
 class BookControllerTest {
     @Value("${test.url.books.list.right}")
@@ -65,21 +66,21 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    //Library library;
+    Library library;
 
     @Autowired
-    //BookRepository bookRepository;
+    BookRepository bookRepository;
 
     @BeforeEach
     protected void setUp(WebApplicationContext webApplicationContext) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    /*@AfterEach
+    @AfterEach
     private void restartLibrary() {
         library.setListBookNow(bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList()));
-    }*/
+    }
 
     protected static String convertMapToJson(String name, String userName) {
         Map<String, String> map = Map.of("name", name, "userName", userName);

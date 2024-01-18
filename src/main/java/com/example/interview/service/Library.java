@@ -22,6 +22,7 @@ public class Library {
     private Map<UUID, BookDTO> mapBookUsedUser = new ConcurrentHashMap<>();
 
     Library(BookRepository bookRepository) {
+        bookRepository.getAll().stream().map(BookMapper.INSTANCE::bookToBookEntity).map(bookEntity -> bookEntity.getName()).forEach(System.out::println);
         this.listBookNow = bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList());
         listBookNow.stream().map(bookEntity -> bookEntity.getName()).forEach(System.out::println);
@@ -38,7 +39,7 @@ public class Library {
     public Optional<BookEntity> reserveBook(String name) {
         List<BookEntity> searchingBook;
         if (name != null) {
-            System.out.println(name);
+            listBookNow.stream().map(bookEntity -> bookEntity.getName()).forEach(System.out::println);
             searchingBook = listBookNow.stream().filter(book -> book
                             .getName()
                             .toLowerCase()

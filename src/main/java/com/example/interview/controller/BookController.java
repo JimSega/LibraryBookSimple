@@ -20,7 +20,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
-
 public class BookController {
 
     private final BookRepository bookRepository;
@@ -39,7 +38,7 @@ public class BookController {
         BookEntity bookEntity = library.reserveBook(bookDTO.getName())
                 .orElseThrow(NotFoundBookException::new);
         bookDTO.setName(bookEntity.getName());
-        if(library.getMapBookUsedUser().containsValue(bookDTO)) {
+        if (library.getMapBookUsedUser().containsValue(bookDTO)) {
             UUID uuidGotAlready = library.getMapBookUsedUser().entrySet().stream()
                     .filter(entry -> entry.getValue().equals(bookDTO))
                     .map(Map.Entry::getKey)
