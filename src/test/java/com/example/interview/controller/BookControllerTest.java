@@ -76,7 +76,7 @@ class BookControllerTest {
     }
 
     @AfterEach
-    private void restartLibrary() {
+    public void restartLibrary() {
         library.setListBookNow(bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList()));
     }
