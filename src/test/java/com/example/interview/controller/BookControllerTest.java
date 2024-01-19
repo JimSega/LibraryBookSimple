@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = InterviewTaskApplication.class)
-@WebAppConfiguration
+//@WebAppConfiguration
 @TestPropertySource("classpath:test.properties")
 class BookControllerTest {
     @Value("${test.url.books.list.right}")
@@ -77,7 +77,7 @@ class BookControllerTest {
     }
 
     @AfterEach
-    private void restartLibrary() {
+    void restartLibrary() {
         library.setListBookNow(bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList()));
     }
