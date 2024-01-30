@@ -22,10 +22,8 @@ public class Library {
     private Map<UUID, BookDTO> mapBookUsedUser = new ConcurrentHashMap<>();
 
     Library(BookRepository bookRepository) {
-        bookRepository.getAll().stream().map(BookMapper.INSTANCE::bookToBookDTO).map(BookDTO::getName).forEach(System.out::println);
         this.listBookNow = bookRepository.getAll().stream()
                 .map(BookMapper.INSTANCE::bookToBookEntity).collect(Collectors.toList());
-        listBookNow.stream().map(BookEntity::getName).forEach(System.out::println);
     }
 
     public synchronized void libraryUpdateBook(BookEntity bookEntity, int i) {
@@ -36,14 +34,18 @@ public class Library {
         }).collect(Collectors.toList());
     }
 
-    public Optional<BookEntity> reserveBook(String name) {
+    public synchronized UUID reserveBook(BookDTO bookDTO) {
+        if (bookDTO.getUserName() == null) {
+            throw new UserNameException(ExceptionMessage.NOT_FOND_USERNAME.toString());
+        }
+
         List<BookEntity> searchingBook;
-        if (name != null) {
-            listBookNow.stream().map(BookEntity::getName).forEach(System.out::println);
+        Optional<BookEntity> optionalBookEntity;
+        if (bookDTO.getName() != null) {
             searchingBook = listBookNow.stream().filter(book -> book
                             .getName()
                             .toLowerCase()
-                            .contains(name.toLowerCase()))
+                            .contains(bookDTO.getName().toLowerCase()))
                     .toList();
         } else throw new NotFoundFieldNameBookException(ExceptionMessage.NOT_FOUND_FIELD_NAME_BOOK.toString());
         if (searchingBook.isEmpty()) {
@@ -56,9 +58,24 @@ public class Library {
                             .getCopies() > 0)
                     .toList();
             if (searchingBook.size() == 1) {
-                return searchingBook.stream().findFirst();
-            } else throw new NotCopiesException(ExceptionMessage.NOT_COPIES + name);
+                optionalBookEntity = searchingBook.stream().findFirst();
+            } else throw new NotCopiesException(ExceptionMessage.NOT_COPIES + bookDTO.getName());
         }
+        BookEntity bookEntity = optionalBookEntity.orElseThrow(NotFoundBookException::new);
+        bookDTO.setName(bookEntity.getName());
+        if (mapBookUsedUser.containsValue(bookDTO)) {
+            UUID uuidGotAlready = mapBookUsedUser.entrySet().stream()
+                    .filter(entry -> entry.getValue().equals(bookDTO))
+                    .map(Map.Entry::getKey)
+                    .toList()
+                    .get(0);
+            throw new SecondReserveThisBookException(ExceptionMessage.THIS_BOOK_ALREADY_RESERVE.toString(), uuidGotAlready);
+        }
+        UUID token = UUID.randomUUID();
+        libraryUpdateBook(bookEntity, -1);
+        mapUUID.put(token, bookEntity);
+        mapBookUsedUser.put(token, bookDTO);
+        return token;
     }
 
     public List<String> getBookUsedUser(String userName) {
