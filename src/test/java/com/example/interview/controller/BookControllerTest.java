@@ -3,12 +3,17 @@ package com.example.interview.controller;
 import com.example.interview.InterviewTaskApplication;
 import com.example.interview.exception.UnableToGetDateException;
 import com.example.interview.excteption.UnableToReadBooksException;
+import com.example.interview.model.Book;
+import com.example.interview.repository.BookRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,60 +22,33 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = InterviewTaskApplication.class)
-//@WebAppConfiguration
-@TestPropertySource("classpath:test.properties")
+@WebMvcTest(BookController.class)
 class BookControllerTest {
-    @Value("${test.url.books.list.right}")
-    String urlRightBooksList;
+    @MockBean
+    private BookRepository bookRepository;
 
-    @Value("${test.url.books.list.wrong}")
-    String urlWrongBooksList;
-
-    private MockMvc mockMvc;
-
-
-    @BeforeEach
-    protected void setUp(WebApplicationContext webApplicationContext) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
-    protected static String convertMapToJson(String name, String userName) {
-        Map<String, String> map = Map.of("name", name, "userName", userName);
-        try {
-            return new ObjectMapper().writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @Autowired
+    protected MockMvc mockMvc;
 
     @Test
-    void getListBookTest() {
-        MvcResult mvcResult;
-        try {
-            mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(urlRightBooksList).accept(MediaType.APPLICATION_JSON_VALUE))
-                    .andReturn();
-        } catch (Exception e) {
-            throw new UnableToReadBooksException(e.getMessage(), e);
-        }
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200, status);
-    }
+    void getListBookTest() throws Exception {
+        // given
+        when(bookRepository.getAll()).thenReturn(List.of(new Book(1, "Author", 2, "Book")));
 
-    @Test
-    void getListBookWrongTest() {
-        MvcResult mvcResult;
-        try {
-            mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(urlWrongBooksList).accept(MediaType.APPLICATION_JSON))
-                    .andReturn();
-        } catch (Exception e) {
-            throw new UnableToGetDateException(e.getMessage(), e);
-        }
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(404, status);
+        // when
+        mockMvc.perform(get("/books/list")
+                .contentType(MediaType.APPLICATION_JSON))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().string("[{\"id\":1,\"author\":\"Author\",\"copies\":2,\"name\":\"Book\"}]"));
     }
 }

@@ -106,7 +106,7 @@ class ReserveControllerTest {
         while (i <= copy) {
             mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(urlReserving)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(BookControllerTest.convertMapToJson(nameBook, Integer.toString(i))))
+                            .content(BookControllerFunctionalTest.convertMapToJson(nameBook, Integer.toString(i))))
                     .andReturn();
             if (i == copy) {
                 String response;
